@@ -12,10 +12,10 @@ http.createServer(function(req,res){
                 router['index'](req,res);
             }else{
                 console.log('讀取到:'+pathname);
-                var img=/images/;
+                var re=/images/;
                 var css=/.*\.css/;
                 var js=/.*\.js/;
-                if(pathname.match(img)){
+                if(pathname.match(re)){
                     var img=pathname.slice(7);
                     router['images'](req,res,img);
                 }else if(pathname.match((css))){
