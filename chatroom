@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <style>
+    body,ul,li{
+      padding:0;
+    }
+    #chat{
+      width:500px;
+      height:500px;
+      border:1px solid black;
+      overflow:auto;
+      margin:0 auto;
+    }
+    #chat li{
+      list-style:none;
+      border-bottom:1px dashed #999;
+      padding:3px;
+      opacity: 0;
+      overflow:auto;
+    }
+  </style>
+</head>
+<body>
+<h1>Immediate Chat</h1>
+your name: <input type="text" id="name" size="10"><br>
+<input type="text" id="sendtxt">
+<button id="sendbtn">發送</button><br>
+<div>伺服器狀態:<span id="recv"></span></div>
+<ul id="chat"></ul>
+<script>
+  $(function(){
+    let div=document.getElementById('recv'),
+      btn=document.getElementById('sendbtn'),
+      txt=document.getElementById('sendtxt'),
+      name=document.getElementById('name'),
+      //ws://echo.websocket.org/
+      //114.46.169.211
+      webSocket=new WebSocket('ws://125.230.7.85:8080');
+    webSocket.onopen=()=>div.innerText='Connected';
+    webSocket.onmessage=function(e){
+      let re=/(.*)(says:)(.*)/, say=e.data.match(re),
+          says='<span style="color:deeppink">'+say[2]+'</span>';
+      if(say[1]==='BroadCast ')
+        says='<span style="color:skyblue">'+say[2]+'</span>';
+      let all=say[1]+says+say[3];
+      let li=$('<li>'+all+'</li>');
+      $('#chat').prepend(li);
+      
+      let liH=$(li).height();
+      $(li).css('height',0);
+      $(li).animate({height:liH},500,()=>{
+        $(li).animate({opacity:1},300);
+      });
+    };
+    webSocket.onclose=()=>div.innerText='Closed';
+    btn.onclick=()=>{
+      if(txt.value===''||txt.value.search(/\<.*\>/)!==-1) return;
+      webSocket.send(name.value+':'+txt.value);
+      txt.value='';
+    };
+    $(window).on('keydown',(e)=>{
+      if(txt.value===''||txt.value.search(/\<.*\>/)!==-1) return;
+      if(e.keyCode===13){
+        webSocket.send(name.value+':'+txt.value);
+        txt.value='';
+      }
+    })
+  });
+</script>
+</body>
+</html>
