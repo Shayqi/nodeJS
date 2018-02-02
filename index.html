@@ -37,9 +37,8 @@ your name: <input type="text" id="name" size="10"><br>
       btn=document.getElementById('sendbtn'),
       txt=document.getElementById('sendtxt'),
       name=document.getElementById('name'),
-      //ws://echo.websocket.org/
-      //114.46.169.211
-      webSocket=new WebSocket('ws://125.230.7.85:8080');
+     
+      webSocket=new WebSocket('ws://127.0.0.1:8080');
     webSocket.onopen=()=>div.innerText='Connected';
     webSocket.onmessage=function(e){
       let re=/(.*)(says:)(.*)/, say=e.data.match(re),
